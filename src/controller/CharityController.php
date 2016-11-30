@@ -4,6 +4,7 @@ namespace charity;
 
 require_once __DIR__."/../utils/Template.php";
 require_once __DIR__."/../utils/Singleton.php";
+require_once __DIR__."/../model/Vote.php";
 
 use \WP_Query;
 use \Exception;
@@ -105,12 +106,26 @@ class CharityController extends Singleton {
 
 		$posts=$q->get_posts();
 		$vars=array();
-		$vars["showVoteCastInfo"]=TRUE;
-		$vars["voteIp"]=$_SERVER["REMOTE_ADDR"];
-		$vars["voteName"]="Hello";
-		$vars["voteDays"]=30;
-		$vars["voteUntil"]=date("l jS \of F Y",time()+30*24*60*60);
+		$vars["showVoteCastInfo"]=FALSE;
 
+		if (isset($_REQUEST["charityId"])) {
+			$vars["showVoteCastInfo"]=TRUE;
+
+			Vote::invalidateIp($_SERVER["REMOTE_ADDR"]);
+
+			$vote=new Vote();
+			$vote->ip=$_SERVER["REMOTE_ADDR"];
+			$vote->stamp=time();
+			$vote->charityId=$_REQUEST["charityId"];
+			$vote->save();
+
+			$vars["voteIp"]=$vote->ip;
+			$vars["voteName"]=$vote->getCharityPost()->post_title;
+			$vars["voteDays"]=Vote::getValidDays();
+			$vars["voteUntil"]=date("l jS \of F Y",$vote->getValidUntil());
+		}
+
+		$currentPost=Vote::getCurrentCharityPost();
 		$vars["charities"]=array();
 
 		foreach ($posts as $post) {
@@ -122,8 +137,14 @@ class CharityController extends Singleton {
 				"title"=>$post->post_title,
 				"description"=>get_post_meta($post->ID,"description",TRUE),
 				"url"=>get_post_meta($post->ID,"url",TRUE),
+				"id"=>$post->ID,
+				"votes"=>Vote::getNumVotesForChairtyId($post->ID),
+				"votePercent"=>Vote::getPercentVotesForChairtyId($post->ID),
 				"isCurrentVote"=>FALSE
 			);
+
+			if ($currentPost && $post->ID==$currentPost->ID)
+				$charityView["isCurrentVote"]=TRUE;
 
 			$vars["charities"][]=$charityView;
 		}

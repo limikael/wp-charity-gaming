@@ -9,29 +9,43 @@
 	</div>
 <?php } ?>
 
-<?php foreach ($charities as $charity) { ?>
-	<div class="charity-listing">
-		<img src="<?php echo $charity["logoUrl"]; ?>"/>
-		<div class="title">
-			<?php echo $charity["title"]; ?>
-		</div>
-		<div class="description">
-			<?php echo $charity["description"]; ?>
-			<br/><br/>
-			<b>More info:</b>
-			<a href="<?php echo $charity["url"]; ?>">
-				<?php echo $charity["url"]; ?>
-			</a>
-		</div>
-		<div class="info">
-			<b>Votes:</b> 123 (20%)<br>
-			<form>
+<form method="post">
+	<?php foreach ($charities as $charity) { ?>
+		<div class="charity-listing">
+			<img src="<?php echo $charity["logoUrl"]; ?>"/>
+			<div class="title">
+				<?php echo $charity["title"]; ?>
+			</div>
+			<div class="description">
+				<?php echo $charity["description"]; ?>
+				<br/><br/>
+				<b>More info:</b>
+				<a href="<?php echo $charity["url"]; ?>">
+					<?php echo $charity["url"]; ?>
+				</a>
+			</div>
+			<div class="info">
+				<b>Votes:</b>
+				<?php echo $charity["votes"]; ?>
+				(<?php echo $charity["votePercent"]; ?>%)<br>
 				<?php if ($charity["isCurrentVote"]) { ?>
-					<input type="submit" value="Your Vote" class="charity-listing-vote current"/>
+					<button type="submit" 
+							name="charityId"
+							value="<?php echo $charity["id"]; ?>"
+							name="charityId"
+							class="charity-listing-vote current">
+						Your Vote
+					</button>
 				<?php } else { ?>
-					<input type="submit" value="Vote" class="charity-listing-vote"/>
+					<button type="submit"
+							name="charityId"
+							value="<?php echo $charity["id"]; ?>"
+							name="charityId"
+							class="charity-listing-vote">
+						Vote
+					</button>
 				<?php } ?>
-			</form>
+			</div>
 		</div>
-	</div>
-<?php } ?>
+	<?php } ?>
+</form>

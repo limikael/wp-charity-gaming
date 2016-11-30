@@ -46,3 +46,11 @@
 .charity-listing-vote.current {
     background: #000000;
 }
+
+.charity-vote-cast-info {
+	background: #efe;
+	margin-bottom: 20px;
+	padding: 10px;
+	border: 1px solid #8f8;
+	border-radius: 5px;
+}

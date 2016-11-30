@@ -1,3 +1,14 @@
+<?php if ($showVoteCastInfo) { ?>
+	<div class="charity-vote-cast-info">
+		<b>Thank you!</b><br><br>
+		Your vote from ip number <b><?php echo $voteIp; ?></b>
+		has been counted for <?php echo $voteName; ?>.<br><br>
+		This vote will be active and affect the revenue sharing on this site
+		for <?php echo $voteDays; ?> days, until <?php echo $voteUntil; ?>.
+		After this time you will need to cast the vote again.
+	</div>
+<?php } ?>
+
 <?php foreach ($charities as $charity) { ?>
 	<div class="charity-listing">
 		<img src="<?php echo $charity["logoUrl"]; ?>"/>

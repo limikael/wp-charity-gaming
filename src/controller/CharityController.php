@@ -95,11 +95,6 @@ class CharityController extends Singleton {
 	 * List charities.
 	 */
 	function listCharities() {
-		wp_enqueue_style(
-			"charity-gaming",
-			CHARITY_URL."/wp-charity-gaming.css"
-		);
-
 		$q=new WP_Query(array(
 			"post_type"=>"charity"
 		));

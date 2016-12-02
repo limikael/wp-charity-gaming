@@ -19,6 +19,7 @@ class CharityGamingPlugin extends Singleton {
 
         register_activation_hook(CHARITY_PATH.'/wp-charity-gaming.php', array($this, 'activate'));
         register_uninstall_hook(CHARITY_PATH.'/wp-charity-gaming.php', array($this, 'uninstall'));
+		add_action('wp_enqueue_scripts', array($this,"enqueueScripts"));
 	}
 
 	/**
@@ -33,5 +34,15 @@ class CharityGamingPlugin extends Singleton {
 	 */
 	public function uninstall() {
 		Vote::uninstall();
+	}
+
+	/**
+	 * Enqueue scripts.
+	 */
+	public function enqueueScripts() {
+		wp_enqueue_style(
+			"charity-gaming",
+			CHARITY_URL."/wp-charity-gaming.css"
+		);
 	}
 }

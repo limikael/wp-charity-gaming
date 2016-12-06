@@ -4,6 +4,7 @@ namespace charity;
 
 require_once __DIR__."/../utils/Singleton.php";
 require_once __DIR__."/../controller/CharityController.php";
+require_once __DIR__."/../controller/SettingsController.php";
 require_once __DIR__."/../model/Vote.php";
 
 /**
@@ -16,6 +17,7 @@ class CharityGamingPlugin extends Singleton {
 	 */
 	public function __construct() {
 		CharityController::instance();
+		SettingsController::instance();
 
         register_activation_hook(CHARITY_PATH.'/wp-charity-gaming.php', array($this, 'activate'));
         register_uninstall_hook(CHARITY_PATH.'/wp-charity-gaming.php', array($this, 'uninstall'));
@@ -27,6 +29,12 @@ class CharityGamingPlugin extends Singleton {
 	 */
 	public function activate() {
 		Vote::install();
+
+		if (!get_option("charity_operational_percentage"))
+			update_option("charity_operational_percentage",20);
+
+		if (!get_option("charity_withdraw_when"))
+			update_option("charity_withdraw_when",0.01);
 	}
 
 	/**

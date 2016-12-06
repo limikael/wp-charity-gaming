@@ -41,4 +41,19 @@ class Template {
 
 		require $this->fileName;
 	}
+
+	/**
+	 * Render html for a list of options.
+	 */
+	public static function options($options, $selected) {
+		echo $selected;
+		foreach ($options as $key=>$value) {
+			printf(
+				"<option value='%s' %s>%s</option>",
+				htmlspecialchars($key),
+				($key==$selected?"selected":""),
+				htmlspecialchars($value)
+			);
+		}
+	}
 }

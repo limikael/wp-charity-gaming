@@ -21,6 +21,60 @@ class CharityController extends Singleton {
 		add_action('init',array($this,'init'));
 		add_filter("rwmb_meta_boxes",array($this,"rwmbMetaBoxes"));
 		add_shortcode("list-charities",array($this,"listCharities"));
+
+		add_action("charity_distribute_revenue",array($this,"distributeRevenue"));
+
+        if (!wp_next_scheduled("charity_distribute_revenue")) {
+            wp_schedule_event(
+                time(),
+                "daily",
+                "charity_distribute_revenue"
+            );
+        }
+	}
+
+	/**
+	 * Distribute.
+	 */
+	public function distributeRevenue() {
+		$operationalPercentage=get_option("charity_operational_percentage");
+		$operationalFraction=$operationalPercentage/100;
+
+		$revenueAccount=bca_entity_account("slotkit-revenue",1);
+		$revenue=$revenueAccount->getBalance("btc");
+
+		if (!$revenue)
+			return;
+
+		$distRevenue=$revenue-$revenue*$operationalFraction;
+
+		$q=new WP_Query(array(
+			"post_type"=>"charity",
+			"posts_per_page"=>-1
+		));
+
+		$posts=$q->get_posts();
+		foreach ($posts as $post) {
+			$charityAccount=bca_entity_account("charity",$post->ID);
+			$percent=Vote::getPercentVotesForChairtyId($post->ID);
+			$amount=$distRevenue*$percent/100;
+			bca_make_transaction("btc",$revenueAccount,$charityAccount,$amount,array(
+				"notice"=>"Rev share"
+			));
+
+			$charityAccount=bca_entity_account("charity",$post->ID);
+			$balance=$charityAccount->getBalance("btc");
+			$address=get_post_meta($post->ID,"bitcoinAddress",TRUE);
+			if ($address && $balance>=get_option("charity_withdraw_when"))
+				$charityAccount->withdraw("btc",$balance,$address);
+		}
+
+		$revenueAccount=bca_entity_account("slotkit-revenue",1);
+		$operationalAccount=bca_entity_account("charity-gaming-operations",1);
+		$amount=$revenueAccount->getBalance("btc");
+		bca_make_transaction("btc",$revenueAccount,$operationalAccount,$amount,array(
+			"notice"=>"Operations"
+		));
 	}
 
 	/**
@@ -44,6 +98,7 @@ class CharityController extends Singleton {
 
 	/**
 	 * Set up meta boxes.
+	 * TODO: link to account.
 	 */
 	public function rwmbMetaBoxes($metaBoxes) {
 		$metaBoxes[]=array(
@@ -96,7 +151,8 @@ class CharityController extends Singleton {
 	 */
 	function listCharities() {
 		$q=new WP_Query(array(
-			"post_type"=>"charity"
+			"post_type"=>"charity",
+			"posts_per_page"=>-1
 		));
 
 		$posts=$q->get_posts();

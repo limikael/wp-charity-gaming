@@ -5,7 +5,7 @@ Plugin Name: Charity Gaming
 Plugin URI: http://github.com/limikael/wp-charity-gaming
 GitHub Plugin URI: https://github.com/limikael/wp-charity-gaming
 Description: Vote and distribute funds to charities.
-Version: 0.0.1
+Version: 0.0.2
 */
 
 define('CHARITY_PATH',plugin_dir_path(__FILE__));

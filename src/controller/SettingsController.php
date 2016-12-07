@@ -82,6 +82,9 @@ class SettingsController extends Singleton {
 			"daily"=>"Daily",
 		);
 
+		$operationalAccount=bca_entity_account("charity-gaming-operations",1);
+		$vars["operationalAccountUrl"]=$operationalAccount->getAdminUrl();
+
 		$vars["currentSchedule"]=wp_get_schedule("charity_distribute_revenue");
 		$vars["collectUrl"]=admin_url("options-general.php?page=charity_gaming_settings&action=collect");
 

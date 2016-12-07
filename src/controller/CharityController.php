@@ -139,11 +139,31 @@ class CharityController extends Singleton {
 					"name"=>"Bitcoin Address",
 					"type"=>"text",
 					"desc"=>"The bitcoin address for the charity."
+				),
+				array(
+					"id"=>"localAccount",
+					"name"=>"Local Account",
+					"type"=>"custom_html",
+					"desc"=>"The local account for the charity.",
+					"callback"=>array($this,"getCharityAccountInfo")
 				)
 			)
 		);
 
 		return $metaBoxes;
+	}
+
+	/**
+	 * Get account info.
+	 */
+	function getCharityAccountInfo() {
+		$account=bca_entity_account("charity",get_the_ID());
+
+		return sprintf(
+			"<a href='%s'>%s</a>",
+			$account->getAdminUrl(),
+			$account->getString()
+		);
 	}
 
 	/**

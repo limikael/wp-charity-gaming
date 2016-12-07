@@ -10,6 +10,10 @@
 	    	from that account will be distributed according to the rules set up
 	    	below.
 	    </p>
+	    <p>
+	    	The amount set aside for operational expenses will be moved to the
+	    	<a href="<?php echo $operationalAccountUrl; ?>">operational account</a>.
+	    </p>
 	    <table class="form-table">
 	        <tr valign="top">
 	            <th scope="row">Operational Expenses</th>

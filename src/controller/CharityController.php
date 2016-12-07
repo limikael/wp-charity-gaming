@@ -58,9 +58,11 @@ class CharityController extends Singleton {
 			$charityAccount=bca_entity_account("charity",$post->ID);
 			$percent=Vote::getPercentVotesForChairtyId($post->ID);
 			$amount=$distRevenue*$percent/100;
-			bca_make_transaction("btc",$revenueAccount,$charityAccount,$amount,array(
-				"notice"=>"Rev share"
-			));
+			if ($amount) {
+				bca_make_transaction("btc",$revenueAccount,$charityAccount,$amount,array(
+					"notice"=>"Rev share"
+				));
+			}
 
 			$charityAccount=bca_entity_account("charity",$post->ID);
 			$balance=$charityAccount->getBalance("btc");
@@ -72,9 +74,11 @@ class CharityController extends Singleton {
 		$revenueAccount=bca_entity_account("slotkit-revenue",1);
 		$operationalAccount=bca_entity_account("charity-gaming-operations",1);
 		$amount=$revenueAccount->getBalance("btc");
-		bca_make_transaction("btc",$revenueAccount,$operationalAccount,$amount,array(
-			"notice"=>"Operations"
-		));
+		if ($amount) {
+			bca_make_transaction("btc",$revenueAccount,$operationalAccount,$amount,array(
+				"notice"=>"Operations"
+			));
+		}
 	}
 
 	/**
